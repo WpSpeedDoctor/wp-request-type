@@ -47,6 +47,7 @@ Sure, here is what they represent:
 
 - **`ajax`**:  
   The entry point is `/wp-admin/admin-ajax.php`. The function `wp_doing_ajax()` is used to determine it.
+  Another entry point that qualifies as `ajax` is when the query string key `wc-ajax` is set, which is used by WooCommerce.
 
 - **`admin`**:  
   Usually, requests start with `/wp-admin/`. The function `is_admin()` is used to determine it.
