@@ -3,9 +3,9 @@
 /*
 * Plugin Name: WP_REQUEST_TYPE definition and usage example
 * Plugin URI: https://wpspeeddoctor.com/plugins/
-* Description: Define type of WP request
+* Description: Define the type of WP request
 * Version: 1.0.0
-* Update date: 2024-08-29
+* Update date: 2024-09-21
 * Author: Jaro Kurimsky
 * License: GPLv2 or later
 */	
@@ -34,11 +34,6 @@ switch( WP_REQUEST_TYPE ){
 		
 		//for your own ajax requests
 		break;
-
-	default:
-
-		// When you sure your code has to run on every request type.
-		break;
 	
 }
 
@@ -47,25 +42,24 @@ switch( WP_REQUEST_TYPE ){
  * When you have only front-end and admin code
  */
 
-if( WP_REQUEST_TYPE === 'frontend'){
+if( WP_REQUEST_TYPE === 'frontend' || WP_REQUEST_TYPE === 'admin' ){
 
-		//use require to load file that contains frontend code
+		//use require to load file that contains frontend and admin code
 
 }
 
 /**
- * @var null
  * @return string -
- * - cron
  * - ajax
  * - admin
+ * - cron
  * - login
  * - xmlrpc
  * - empty
  * - rest
  * - sitemap
  * - 404
- * - fe
+ * - frontend
 */
 	
 //use function name suffix or namespace to avoid conflict with the same named function
