@@ -2,7 +2,7 @@
 
 //Add your namespace
 
-// Using WPSD prefix as WP is exclusive use to WP core. 
+// Using WPSD prefix as WP is exclusively used in WP core. 
 // WP_URI_PATH should be added into WP core as many plugins many times are parsing URL to get URI Path
 defined('WPSD_URI_PATH') || define('WPSD_URI_PATH', strstr( $_SERVER['REQUEST_URI']??'', '?', true ) ?: $_SERVER['REQUEST_URI']??'');
 
@@ -53,8 +53,8 @@ function get_wp_request_type(){
 		case str_contains( WPSD_URI_PATH,'/wp-json/' ): 
 			return REQUEST_REST;
 
-		case ($extension = strstr( WPSD_URI_PATH,'.') ) === null:
 		//fallthough solution for improved performance
+		case ($extension = strstr( WPSD_URI_PATH,'.') ) === null:
 		
 		case $extension === '.xml' && str_contains( WPSD_URI_PATH, 'sitemap' ):
 			return REQUEST_SITEMAP;
@@ -65,10 +65,11 @@ function get_wp_request_type(){
 		case $extension !== false:
 			return REQUEST_404;
 
-		case str_ends_with( WPSD_URI_PATH, '/feed/' ):
+		case str_ends_with( WPSD_URI_PATH, '/feed/' ) || str_ends_with( WPSD_URI_PATH, '/feed' ):
 			return REQUEST_FEED;
 
 		default:
 			return REQUEST_FRONTEND;
 	}
 }
+
