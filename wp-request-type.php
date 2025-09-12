@@ -2,7 +2,7 @@
 
 //Add your namespace
 
-// Using WPSD prefix as WP is exclusively used in WP core. 
+// Using the WPSD prefix, as WP is exclusively used in WordPress core. 
 // WP_URI_PATH should be added into WP core as many plugins many times are parsing URL to get URI Path
 defined('WPSD_URI_PATH') || define('WPSD_URI_PATH', strstr( $_SERVER['REQUEST_URI']??'', '?', true ) ?: $_SERVER['REQUEST_URI']??'');
 
@@ -24,11 +24,13 @@ if( !defined( 'WPSD_REQUEST_TYPE' ) ){
 	define( 'WPSD_REQUEST_TYPE', get_wp_request_type() );
 }
 
+//Make sure to use it with a namespace to avoid conflicts or add function_exists('get_wp_request_type')
 function get_wp_request_type(){
 
 	switch(true){
 
-		case wp_doing_ajax() || isset( $_GET['wc-ajax'] ):
+		case wp_doing_ajax():
+		case isset( $_GET['wc-ajax'] ):
 			return REQUEST_AJAX;
 
 		case is_admin():
@@ -49,27 +51,29 @@ function get_wp_request_type(){
 		case WPSD_URI_PATH === '':
 			return REQUEST_EMPTY;
 
-		//wp_is_json_request() is making false positives for front-end requests
-		case str_contains( WPSD_URI_PATH,'/wp-json/' ): 
-			return REQUEST_REST;
-
-		//fallthough solution for improved performance
-		case ($extension = strstr( WPSD_URI_PATH,'.') ) === null:
-		
-		case $extension === '.xml' && str_contains( WPSD_URI_PATH, 'sitemap' ):
-			return REQUEST_SITEMAP;
-
-		case $extension === '.php':
-			return REQUEST_DIRECT;
-
-		case $extension !== false:
-			return REQUEST_404;
-
-		case str_ends_with( WPSD_URI_PATH, '/feed/' ) || str_ends_with( WPSD_URI_PATH, '/feed' ):
+		case str_ends_with( WPSD_URI_PATH, '/feed/' ):
+		case str_ends_with( WPSD_URI_PATH, '/feed' ):
 			return REQUEST_FEED;
 
-		default:
+		//wp_is_json_request() is making false positives for front-end requests
+		case str_contains( WPSD_URI_PATH,'/wp-json/' ):
+		case str_contains( WPSD_URI_PATH,'/wc-api/' ):
+		case WPSD_URI_PATH === '/' && isset($_GET['rest_route']): 
+			return REQUEST_REST;
+		
+		case ( $extension = strstr(WPSD_URI_PATH,'.') ) === false:
 			return REQUEST_FRONTEND;
+
+		case $extension ==='.xml' && str_contains( WPSD_URI_PATH, 'sitemap' ):
+			return REQUEST_SITEMAP;
+
+		case $extension ==='.php':
+			return REQUEST_DIRECT;
+
+		default:
+			return REQUEST_404;
 	}
+
 }
+
 
