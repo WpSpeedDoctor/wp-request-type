@@ -1,12 +1,12 @@
-# WP_REQUEST_TYPE
+# WordPress request type constant WPSD_REQUEST_TYPE
 
 A lightweight and efficient WordPress helper to determine the current request type (AJAX, admin, cron, etc.) and improve plugin/theme performance by conditional execution of its code.
 
 ---
 
-## 🔍 What is WP_REQUEST_TYPE?
+## 🔍 What is WPSD_REQUEST_TYPE?
 
-`WP_REQUEST_TYPE` is a runtime-defined constant that identifies the current type of request in a WordPress environment. It enables developers to conditionally load code only when needed—reducing memory use, execution time, and server strain.
+`WPSD_REQUEST_TYPE` is a runtime-defined constant that identifies the current type of request in a WordPress environment. It enables developers to conditionally load code only when needed—reducing memory use, execution time, and server strain.
 
 ---
 
@@ -29,10 +29,10 @@ A lightweight and efficient WordPress helper to determine the current request ty
 require_once __DIR__ . '/wp-request-type.php';
 ```
 
-3. Use the `WP_REQUEST_TYPE` constant in your code:
+3. Use the `WPSD_REQUEST_TYPE` constant in your code:
 
 ```php
-if( WP_REQUEST_TYPE === REQUEST_AJAX ){
+if( WPSD_REQUEST_TYPE === REQUEST_AJAX ){
 	// AJAX-specific code here
 }
 ```
@@ -63,24 +63,26 @@ switch(WPSD_REQUEST_TYPE){
 
 ## 🧠 Why This Exists
 
-WordPress lacks a native global way to detect request type early in execution. Without this, plugins and themes frequently load all hooks and files regardless of relevance. With `WP_REQUEST_TYPE`, you can limit execution to relevant branches.
+WordPress lacks a native global way to detect request type early in execution. Without this, plugins and themes frequently load all hooks and files regardless of relevance. With `WPSD_REQUEST_TYPE`, you can limit execution to relevant branches.
 
 ---
 
-## 🔎 Request Type Overview
+| Constant           | Description                                 | Detection Method                                                                                                                                     |
+| ------------------ | ------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `REQUEST_FRONTEND` | Fallback to front-end                       | When no other type matches and no file extension detected                                                                                            |
+| `REQUEST_AJAX`     | Admin AJAX or WooCommerce `wc-ajax`         | `wp_doing_ajax()` or `isset($_GET['wc-ajax'])`                                                                                                       |
+| `REQUEST_ADMIN`    | WordPress admin area                        | `is_admin()`                                                                                                                                         |
+| `REQUEST_CRON`     | Cron job (`wp-cron.php`)                    | `wp_doing_cron()`                                                                                                                                    |
+| `REQUEST_LOGIN`    | Login screen (`wp-login.php`)               | `is_callable('login_header')`                                                                                                                        |
+| `REQUEST_XMLRPC`   | XML-RPC API (`xmlrpc.php`)                  | `defined('XMLRPC_REQUEST')`                                                                                                                          |
+| `REQUEST_EMPTY`    | Blank/undefined request URI                 | `WPSD_URI_PATH === ''`                                                                                                                               |
+| `REQUEST_REST`     | REST API requests (`/wp-json/`, `/wc-api/`) | `str_contains(WPSD_URI_PATH, '/wp-json/')` <br> `str_contains(WPSD_URI_PATH, '/wc-api/')` <br> `WPSD_URI_PATH === '/' && isset($_GET['rest_route'])` |
+| `REQUEST_SITEMAP`  | Sitemap requests (`/wp-sitemap.xml`)        | URI ends with `.xml` and contains `sitemap`                                                                                                          |
+| `REQUEST_DIRECT`   | Direct PHP request                          | URI ends with `.php`                                                                                                                                 |
+| `REQUEST_404`      | Missing file, invalid request               | No matching case found                                                                                                                               |
+| `REQUEST_FEED`     | Feed requests (`/feed/`)                    | URI ends with `/feed/` or `/feed`                                                                                                                    |
+| `REQUEST_CLI`      | WP-CLI execution                            | `defined('WP_CLI')`                                                                                                                                  |
 
-| Constant         | Description                                 | Detection Method                            |
-|------------------|---------------------------------------------|---------------------------------------------|
-| `REQUEST_CRON`   | Cron job (`wp-cron.php`)                    | `wp_doing_cron()`                           |
-| `REQUEST_AJAX`   | Admin AJAX or WooCommerce `wc-ajax`         | `wp_doing_ajax()` or `$_GET['wc-ajax']`     |
-| `REQUEST_ADMIN`  | WordPress admin area                        | `is_admin()`                                |
-| `REQUEST_LOGIN`  | Login screen (`wp-login.php`)               | URI path match                              |
-| `REQUEST_XMLRPC` | XML-RPC API (`xmlrpc.php`)                  | URI path match                              |
-| `REQUEST_EMPTY`  | Blank/undefined request URI                 | `empty($_SERVER['REQUEST_URI'])`            |
-| `REQUEST_REST`   | REST API requests (`/wp-json/`)             | URI path match                              |
-| `REQUEST_SITEMAP`| Sitemap requests (`/wp-sitemap.xml`)        | URI path match                              |
-| `REQUEST_404`    | Missing file, invalid request               | `!file_exists()` + status                   |
-| `REQUEST_FRONTEND`| Fallback to front-end                      | When no other type matches                  |
 
 ---
 
@@ -89,11 +91,11 @@ WordPress lacks a native global way to detect request type early in execution. W
 In your plugin's main file:
 
 ```php
-if( !defined('WP_REQUEST_TYPE') ){
+if( !defined('WPSD_REQUEST_TYPE') ){
 	require_once __DIR__ . '/wp-request-type.php';
 }
 
-switch( WP_REQUEST_TYPE ){
+switch( WPSD_REQUEST_TYPE ){
 
 	case REQUEST_REST:
 		// Setup REST endpoints
@@ -117,7 +119,7 @@ switch( WP_REQUEST_TYPE ){
 
 ## 🔒 Why Core Adoption Isn't Enough
 
-Even if `WP_REQUEST_TYPE` were added to WordPress core, its true power lies in **developer adoption**. Without usage in themes/plugins, its benefits are lost. Community-wide participation is essential.
+Even if `WPSD_REQUEST_TYPE` were added to WordPress core, its true power lies in **developer adoption**. Without usage in themes/plugins, its benefits are lost. Community-wide participation is essential.
 
 ---
 
