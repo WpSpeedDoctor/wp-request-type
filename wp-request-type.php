@@ -51,15 +51,15 @@ function get_wp_request_type(){
 		case WPSD_URI_PATH === '':
 			return REQUEST_EMPTY;
 
+		//wp_is_json_request() is making false positives for front-end requests
+		case !empty($_GET['rest_route']):
+		case str_contains( WPSD_URI_PATH,'/wp-json/' ):
+		case str_contains( WPSD_URI_PATH,'/wc-api/' ):
+			return REQUEST_REST;
+
 		case str_ends_with( WPSD_URI_PATH, '/feed/' ):
 		case str_ends_with( WPSD_URI_PATH, '/feed' ):
 			return REQUEST_FEED;
-
-		//wp_is_json_request() is making false positives for front-end requests
-		case str_contains( WPSD_URI_PATH,'/wp-json/' ):
-		case str_contains( WPSD_URI_PATH,'/wc-api/' ):
-		case WPSD_URI_PATH === '/' && isset($_GET['rest_route']): 
-			return REQUEST_REST;
 		
 		case ( $extension = strstr(WPSD_URI_PATH,'.') ) === false:
 			return REQUEST_FRONTEND;
@@ -75,5 +75,6 @@ function get_wp_request_type(){
 	}
 
 }
+
 
 
