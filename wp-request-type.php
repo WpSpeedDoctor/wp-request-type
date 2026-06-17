@@ -61,7 +61,7 @@ function get_wp_request_type(){
 		case str_ends_with( WPSD_URI_PATH, '/feed' ):
 			return REQUEST_FEED;
 		
-		case ( $extension = strstr(WPSD_URI_PATH,'.') ) === false:
+		case ( $extension = strrchr(WPSD_URI_PATH,'.') ) === false:
 			return REQUEST_FRONTEND;
 
 		case $extension ==='.xml' && str_contains( WPSD_URI_PATH, 'sitemap' ):
@@ -75,6 +75,3 @@ function get_wp_request_type(){
 	}
 
 }
-
-
-
